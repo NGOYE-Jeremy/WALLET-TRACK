@@ -140,7 +140,20 @@
     font-size: 30px;
     color: #fff;
 }
-
+.btn-export{
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: 1px solid rgb(205, 205, 205);
+    cursor: pointer;
+    width: 30%;
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+}
+.btn-export:hover{
+    background-color: #dedede;
+}
 .container .partie-droite .line{
     height: 1px;
     width: 100%;
