@@ -764,3 +764,4 @@ themeObserver.observe(document.documentElement, {
   attributes: true,
   attributeFilter: ['data-theme']
 });
+git
