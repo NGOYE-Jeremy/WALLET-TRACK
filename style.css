@@ -70,6 +70,21 @@
     font-size: 30px;
     font-weight: bold;
 }
+.container .partie-droite .top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.container .partie-droite .top .monnaie{
+    padding: 7px;
+    border: 1px solid rgb(194, 194, 194);
+    border-radius: 7px;
+    height: 30px;
+    cursor: pointer;
+}
+.container .partie-droite .top .monnaie:hover{
+    background-color: #e8e8e8;
+}
 .container .partie-droite .grid{
     display: grid;
     grid-template-rows: repeat(1fr);
