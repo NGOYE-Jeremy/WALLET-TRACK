@@ -1,5 +1,6 @@
 var formulaire = document.getElementById("formulaire");
 
+
 function ouvrir_formulaire(){
     formulaire.style.display = "flex"
 }
