@@ -15,14 +15,18 @@
             </div>
 
             <div class="menu">
-                <div class="btn">
-                    <i class="fa fa-home"></i>
-                    Tableau de bord
-                </div>
-                <div class="btn">
-                    <i class="fa fa-line-chart"></i>
-                    Statistique
-                </div>
+                <a href="./index.html">
+                    <div class="btn">
+                        <i class="fa fa-home"></i>
+                        Tableau de bord
+                    </div>
+                </a>
+                <a href="statistique.html">
+                    <div class="btn">
+                        <i class="fa fa-line-chart"></i>
+                        Statistique
+                    </div>
+                </a>
             </div>
         </section>
 
@@ -108,12 +112,11 @@
 
             <form id="formulaire" class="formulaire">
                 <div class="types">
-                    <div class="type type-revenu" onclick="type_revenue()" id="revenue">
-                        Revenue
-                    </div>
-                    <div class="type type-depense" onclick="type_depense()" id="depense">
-                        Dépense
-                    </div>
+                    <select name="type" id="type" class="type" required>
+                        <option>type</option>
+                        <option value="Dépense">Dépense</option>
+                        <option value="Revenue">Revenue</option>
+                    </select>
                 </div>
 
                 <div class="inp">
@@ -130,6 +133,13 @@
                     <button type="submit" class="btns">Soumettre</button>
                 </div>
             </form>
+
+            <div class="line"></div>
+
+            <div class="graphique-depense">
+                <h3>Graphique des dépenses</h3>
+                <canvas id="chartDepense" class="graphique"></canvas>
+            </div>
         </section>
     </div>
 
