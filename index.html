@@ -3,12 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Wallet-Track - Application de gestion budgétaire personnelle">
+    <meta name="author" content="Wallet-Track Team">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💰%3C/text%3E%3C/svg%3E" type="image/svg+xml">
     <title>Wallet-Track</title>
 </head>
 <body>
-    
-    <script src="style.js">
-    </script>
+    <div class="container">
+        <section class="partie-gauche">
+            <header class="logo">
+                <p><span class="logo-l">WALLET</span>-<span class="logo-r">TRACK</span></p>
+            </header>
+
+            <nav class="menu">
+                <div class="btn" role="button" tabindex="0" aria-label="Tableau de bord">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                    Tableau de bord
+                </div>
+                <div class="btn" role="button" tabindex="0" aria-label="Statistiques">
+                    <i class="fa fa-line-chart" aria-hidden="true"></i>
+                    Statistique
+                </div>
+            </nav>
+        </section>
+
+        <main class="partie-droite">
+            <div class="top">
+                <div class="message">
+                    <p><span class="text-gros">Bonjour</span> <br> <span class="text-flou">Bienvenue sur</span> <span class="text-gras">Wallet-track</span></p>
+                </div>
+                <select id="monnaie" class="monnaie" aria-label="Sélectionner la devise">
+                        <option value="XAF">XAF</option>
+                        <option value="USD">USD</option>
+                        <option value="Euro">Euro</option>
+                </select>
+            </div>
+            <div class="grid">
+                <div class="item solde">
+                    <div class="titre">
+                        <p>Solde</p>
+                    </div>
+                    <div class="depot" onclick="ouvrir_formulaire()" role="button" tabindex="0" aria-label="Ajouter une transaction">
+                        <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                        ajouter
+                    </div>
+                    <div class="montant">
+                        <p>0 XAF</p>
+                    </div>
+                </div>
+                <div class="item revenue">
+                    <div class="titre">
+                        <p>Revenue</p>
+                    </div>
+                    <div class="montant">
+                        <p>0 XAF</p>
+                    </div>
+                </div>
+                <div class="item depense">
+                    <div class="titre">
+                        <p>Dépense</p>
+                    </div>
+                    <div class="montant">
+                        <p>0 XAF</p>
+                    </div>
+                </div>
+            </div>
+
+             <button class="btn-export" aria-label="Exporter les transactions en CSV">
+                <i class="fa-solid fa-file-export" aria-hidden="true"></i>
+                Exporter en CSV
+            </button>
+            <div class="line"></div>
+
+            <div class="transaction">
+                <div class="titles">
+                    <p class="title">Transactions</p>
+                    <p class="sous-title">Toutes les catégories</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Catégorie</th>
+                            <th>Montant</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="enregistrement" onclick="ouvrir_formulaire()" role="button" tabindex="0" aria-label="Nouvel enregistrement">
+                <i class="fa-solid fa-plus" aria-hidden="true"></i>
+                Enregistrement
+            </div>
+
+            <form id="formulaire" class="formulaire" autocomplete="off">
+                <h2>Nouvelle transaction</h2>
+
+                <div class="types">
+                    <select name="type" id="type" class="type" required aria-label="Type de transaction">
+                        <option value="type">Choisir un type</option>
+                        <option value="Dépense">Dépense</option>
+                        <option value="Revenue">Revenue</option>
+                    </select>
+                </div>
+
+                <div class="inp">
+                    <label for="montant">Montant</label>
+                    <input type="number" name="montant" id="montant" placeholder="ex: 5000" min="1" step="0.01" required aria-label="Montant de la transaction">
+                    <label for="categorie">Catégorie</label>
+                    <input type="text" name="categorie" id="categorie" placeholder="ex: vêtement" required aria-label="Catégorie de la transaction">
+                    <label for="date">Date</label>
+                    <input type="datetime-local" name="date" id="date" required aria-label="Date et heure de la transaction">
+                </div>
+
+                <div class="boutons">
+                    <div onclick="fermer_formulaire()" class="btns" role="button" tabindex="0" aria-label="Annuler">annuler</div>
+                    <button type="submit" class="btns" aria-label="Soumettre la transaction">Soumettre</button>
+                </div>
+            </form>
+
+            <div class="graphique-depense">
+                <h3>Graphique des dépenses</h3>
+                <canvas id="chartDepense" class="graphique" aria-label="Graphique des dépenses"></canvas>
+                <div id="chart-summary"></div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="toast-container" role="alert" aria-live="polite" aria-atomic="true"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="style.js" defer></script>
 </body>
 </html>
