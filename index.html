@@ -4,10 +4,139 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <title>Wallet-Track</title>
 </head>
 <body>
-    
+    <div class="container">
+        <section class="partie-gauche">
+            <div class="logo">
+                <p><span class="logo-l">WALLET</span>-<span class="logo-r">TRACK</span></p>
+            </div>
+
+            <div class="menu">
+                <a href="./index.html">
+                    <div class="btn">
+                        <i class="fa fa-home"></i>
+                        Tableau de bord
+                    </div>
+                </a>
+                <a href="statistique.html">
+                    <div class="btn">
+                        <i class="fa fa-line-chart"></i>
+                        Statistique
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="partie-droite">
+            <div class="top">
+                <div class="message">
+                    <p><span class="text-gros">Bonjour</span> <br> <span class="text-flou">Bienvenue sur</span> <span class="text-gras">Wallet-track</span></p>
+                </div>
+                <select id="monnaie" class="monnaie">
+                        <option value="XAF">XAF</option>
+                        <option value="USD">USD</option>
+                        <option value="Euro">Euro</option>
+                </select>
+            </div>
+            <div class="grid">
+                <div class="item solde">
+                    <div class="titre">
+                        <p>Solde</p>
+                    </div>
+                    <div class="depot" onclick="ouvrir_formulaire()">
+                        <i class="fa-solid fa-plus"></i>
+                        ajouter
+                    </div>
+                    <div class="montant">
+                        <p>0 FCFA</p>
+                    </div>
+                </div>
+                <div class="item revenue">
+                    <div class="titre">
+                        <p>Revenue</p>
+                    </div>
+                    <div class="montant">
+                        <p>0 FCFA</p>
+                    </div>
+                </div>
+                <div class="item depense">
+                    <div class="titre">
+                        <p>Dépense</p>
+                    </div>
+                    <div class="montant">
+                        <p>0 FCFA</p>
+                    </div>
+                </div>
+            </div>
+
+             <button class="btn-export">
+                <i class="fa-solid fa-file-export"></i>
+                Exporter en CSV
+            </button>
+            <div class="line"></div>
+
+            <div class="transaction">
+                <div class="titles">
+                    <p class="title">Transactions</p>
+                    <p class="sous-title">Toutes les catégories</p>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Catégorie</th>
+                            <th>Montant</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="enregistrement" onclick="ouvrir_formulaire()">
+                <i class="fa-solid fa-plus"></i>
+                Enregistrement
+            </div>
+
+            <form id="formulaire" class="formulaire">
+                <div class="types">
+                    <select name="type" id="type" class="type" required>
+                        <option>type</option>
+                        <option value="Dépense">Dépense</option>
+                        <option value="Revenue">Revenue</option>
+                    </select>
+                </div>
+
+                <div class="inp">
+                    <label for="montant">montant</label>
+                    <input type="number" name="montant"id="montant" required>
+                    <label for="categorie">Catégorie</label>
+                    <input type="text" name="categorie" id="categorie" required>
+                    <label for="date">Date</label>
+                    <input type="datetime-local" name="date" required>
+                </div>
+
+                <div class="boutons">
+                    <div onclick="fermer_formulaire()" class="btns">annuler</div>
+                    <button type="submit" class="btns">Soumettre</button>
+                </div>
+            </form>
+
+            <div class="line"></div>
+
+            <div class="graphique-depense">
+                <h3>Graphique des dépenses</h3>
+                <canvas id="chartDepense" class="graphique"></canvas>
+            </div>
+        </section>
+    </div>
+
+
     <script src="style.js">
     </script>
 </body>
