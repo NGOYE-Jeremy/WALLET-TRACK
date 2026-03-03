@@ -1,0 +1,54 @@
+le html :                                                                                                                         <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <title>Wallet-Track</title>
+</head>
+<body>
+    <div class="container">
+        <section class="partie-gauche">
+            <div class="logo">
+                <p><span class="logo-l">WALLET</span>-<span class="logo-r">TRACK</span></p>
+            </div>
+
+            <div class="menu">
+                <a href="./index.html">
+                    <div class="btn">
+                        <i class="fa fa-home"></i>
+                        Tableau de bord
+                    </div>
+                </a>
+                <a href="statistique.html">
+                    <div class="btn">
+                        <i class="fa fa-line-chart"></i>
+                        Statistique
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="partie-droite">
+            
+            <div class="graphique-depense">
+                <h3>Graphique des dépenses</h3>
+                <canvas id="chartDepense" class="graphique"></canvas>
+
+                <h3>flux de trésorerie</h3>
+                <canvas id="chartDepense" class="graphique"></canvas>
+            </div>
+
+        </section>
+    </div>
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="style.js">
+    </script>
+</body>
+</html>
