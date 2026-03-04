@@ -7,6 +7,7 @@ var currentCurrency = "XAF";
 var rates = { XAF: 1, USD: 600, EUR: 650 };
 var symbols = { XAF: "XAF", USD: "$", EUR: "€" };
 
+// convertion de la monaie
 function convert(amount) {
     return amount / rates[currentCurrency];
 }
@@ -15,6 +16,7 @@ function format(amount) {
     return convert(amount).toFixed(2) + " " + symbols[currentCurrency];
 }
 
+// ouvrerture et fermeture du formulaire
 function ouvrir_formulaire() {
     formulaire.style.display = "flex";
 }
@@ -23,6 +25,7 @@ function fermer_formulaire() {
     formulaire.style.display = "none";
 }
 
+// *****************rendre le formulaire fonctionnel*****************************
 formulaire.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -71,6 +74,7 @@ function recalculerTotaux() {
     updateCharts();
 }
 
+// ***********************conversion de la monaie (FCFA/USD/EURO)***************************
 document.getElementById("monnaie").addEventListener("change", function () {
     currentCurrency = this.value;
 
@@ -80,17 +84,20 @@ document.getElementById("monnaie").addEventListener("change", function () {
     recalculerTotaux();
 });
 
+// **************************gestion des graphiques ********************************
 var ctx1 = document.getElementById("chartDepense").getContext("2d");
 var ctx2 = document.getElementById("chartFlux").getContext("2d");
 var ctx3 = document.getElementById("chartSolde").getContext("2d");
 
-var chartDepense = new Chart(ctx1, {
+var chartDepense = new Chart(ctx1, { // graphique pour les dépenses
     type: "doughnut",
     data: {
         labels: [],
         datasets: [{
             data: [],
-            backgroundColor: ["#ff0000", "#ff8000", "#51ff00", "#ff00d0", "#00ffd5", "#5500ff"]
+            backgroundColor: ["#ff0000", "#ff8000", 
+                                "#51ff00", "#ff00d0", "#00ffd5", 
+                                "#5500ff"]
         }]
     },
     options: {
@@ -99,7 +106,7 @@ var chartDepense = new Chart(ctx1, {
     }
 });
 
-var chartFlux = new Chart(ctx2, {
+var chartFlux = new Chart(ctx2, { // graphique pour le flux de trésorerie (le cache flow)
     type: "bar",
     data: {
         labels: ["Revenus", "Dépenses"],
@@ -114,7 +121,7 @@ var chartFlux = new Chart(ctx2, {
     }
 });
 
-var chartSolde = new Chart(ctx3, {
+var chartSolde = new Chart(ctx3, { //graphique pour le solde
     type: "line",
     data: {
         labels: labelsSolde,
@@ -131,7 +138,7 @@ var chartSolde = new Chart(ctx3, {
     }
 });
 
-function updateCharts() {
+function updateCharts() { //mise à jour des graphiques
     var depenses = transactions.filter(t => t.type === "Dépense");
 
     chartDepense.data.labels = depenses.map(t => t.categorie);
@@ -149,6 +156,7 @@ function updateCharts() {
     chartSolde.update();
 }
 
+// *************************exporter un fichier en csv*************************
 function exporterCSV() {
     if (transactions.length === 0) {
         alert("Aucune transaction à exporter.");
@@ -171,3 +179,15 @@ function exporterCSV() {
 }
 
 document.querySelector(".btn-export").addEventListener("click", exporterCSV);
+
+// ************************calcule des dépenses et des revenues avec reduce()*********************
+function calculerAvecReduce() {
+    return transactions.reduce(
+        (acc, t) => {
+            if (t.type === "Revenue") acc.totalRevenu += t.montant;
+            if (t.type === "Dépense") acc.totalDepense += t.montant;
+            return acc;
+        },
+        { totalRevenu: 0, totalDepense: 0 }
+    );
+}
