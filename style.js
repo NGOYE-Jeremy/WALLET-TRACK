@@ -1,4 +1,5 @@
 var formulaire = document.getElementById("formulaire");
+var formulaire_contact = document.getElementById("formulaire_contact");
 var transactions = [];
 var soldeHistory = [];
 var labelsSolde = [];
@@ -25,6 +26,13 @@ function fermer_formulaire() {
     formulaire.style.display = "none";
 }
 
+function ouverture_formulaire_contacte() {
+    formulaire_contact.style.display = "block";
+}
+
+function fermer_formulaire_contact() {
+    formulaire_contact.style.display = "none";
+}
 // *****************rendre le formulaire fonctionnel*****************************
 formulaire.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -224,3 +232,37 @@ recalculerTotaux = function () {
     _oldRecalculerTotaux();
     sauvegarderDonnees();
 };
+
+// **************************** SUPPRIMER LES DONNÉES SAUVEGARDÉES ******************************
+function resetDonnees() {
+
+    // Demande de confirmation
+    var confirmation = confirm("Voulez-vous vraiment supprimer toutes vos données ? Cette action est irréversible.");
+
+    if (!confirmation) {
+        alert("Suppression annulée.");
+        return;
+    }
+
+    // Suppression des données
+    localStorage.removeItem("transactions");
+    localStorage.removeItem("soldeHistory");
+    localStorage.removeItem("labelsSolde");
+
+    // Réinitialiser les variables en mémoire
+    transactions = [];
+    soldeHistory = [];
+    labelsSolde = [];
+
+    // Vider l'affichage
+    document.querySelector("tbody").innerHTML = "";
+    document.querySelector(".revenue .montant p").innerText = format(0);
+    document.querySelector(".depense .montant p").innerText = format(0);
+    document.querySelector(".solde .montant p").innerText = format(0);
+
+    // Mettre à jour les graphiques
+    updateCharts();
+
+    alert("Toutes les données ont été supprimées !");
+}
+

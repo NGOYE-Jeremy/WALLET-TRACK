@@ -21,6 +21,25 @@
                         Tableau de bord
                     </div>
                 </a>
+                <div class="btn" onclick="ouverture_formulaire_contacte()">
+                    <i class="fas fa-envelope"></i>
+                    Contactez-nous
+                </div>
+
+                <form id="formulaire_contact" action="https://formspree.io/f/xjgenwpj" method="POST">
+                    <label for="name">nom</label>
+                    <input type="text" id="name"> <br>
+                    <label for="email">email</label>
+                    <input type="email" id="email"> <br>
+                    <label for="message">message</label>
+                    <textarea name="message" id="message" placeholder="message"></textarea> <br>
+                    <div class="bouton-contact">
+                        <button type="submit" class="submit">Envoyer</button>
+                        <div class="submit" onclick="fermer_formulaire_contact()">
+                            Annuler
+                        </div>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -132,6 +151,11 @@
                     <canvas id="chartSolde"></canvas>
                 </div>
             </div>
+
+            <button onclick="resetDonnees()" class="btn-reset">
+                <i class="fas fa-trash"></i>
+                Réinitialiser les données
+            </button>
         </section>
     </div>
 

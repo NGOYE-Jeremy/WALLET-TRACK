@@ -6,7 +6,6 @@
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
-
 .container{
     display: flex;
     padding: 20px;
@@ -217,7 +216,59 @@
     background-color: #fffefe;
     color: #000000;
 }
-
+#formulaire_contact p{
+    font-weight: bold;
+}
+#formulaire_contact label{
+    font-weight: bold;
+}
+#formulaire_contact .submit{
+    background-color: #000000;
+    color: #fff;
+    padding: 10px 20px;
+    border: 2px solid black;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.5s;
+}
+.bouton-contact{
+    display: flex;
+    width: 100%;
+    gap: 10px;
+}
+#formulaire_contact .submit:hover{
+    background-color: #fff;
+    color: black;
+}
+#formulaire_contact input, textarea{
+    width: 100%;
+    padding: 10px 0;
+    border: none;
+    border-bottom: 1.5px solid #716b6b;
+    background-color: transparent;
+    margin-bottom: 15px;
+}
+#formulaire_contact{
+    display: none;
+    flex-direction: column;
+    gap: 30px;
+    width: 50%;
+    max-width: 250px;
+    top: 65%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    padding: 20px;
+    position: fixed;
+    left: 11%;
+    transform: translate(-50%, -50%);
+    /* display: block; */
+    border: 1px solid black;
+    backdrop-filter: blur(19px);
+    background-color: rgba(255, 255, 255, 0.687);
+    position: absolute;
+    margin-left: 0px;
+}
 .formulaire{
     flex-direction: column;
     gap: 30px;
@@ -299,10 +350,27 @@
     width: 100% !important;
     height: 260px !important;
 }
-
+.btn-reset{
+    padding: 10px 20px;
+    background-color: #ff0000;
+    color: #fff;
+    border-radius: 15px;
+    border: 2px solid #ff0000;
+    transition: 0.5s;
+    font-weight: bold;
+    cursor: pointer;
+}
+.btn-reset:hover{
+    background-color: #fff;
+    color: black;
+}
 /* Responsive */
 
 @media (max-width: 1024px){
+    #formulaire_contact{
+        width: 400px;
+        left: 60%;
+    }
     .container{
         flex-direction: column;
     }
