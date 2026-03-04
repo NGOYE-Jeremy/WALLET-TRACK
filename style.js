@@ -191,3 +191,36 @@ function calculerAvecReduce() {
         { totalRevenu: 0, totalDepense: 0 }
     );
 }
+
+// **************************** SAUVEGARDE AUTOMATIQUE AVEC localStorage ******************************
+
+// Charger les données sauvegardées au démarrage
+window.addEventListener("load", function () {
+    var savedTransactions = localStorage.getItem("transactions");
+    var savedSoldeHistory = localStorage.getItem("soldeHistory");
+    var savedLabelsSolde = localStorage.getItem("labelsSolde");
+
+    if (savedTransactions) {
+        transactions = JSON.parse(savedTransactions);
+        transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montant, t.type));
+    }
+
+    if (savedSoldeHistory) soldeHistory = JSON.parse(savedSoldeHistory);
+    if (savedLabelsSolde) labelsSolde = JSON.parse(savedLabelsSolde);
+
+    recalculerTotaux();
+});
+
+// Sauvegarder automatiquement après chaque ajout
+function sauvegarderDonnees() {
+    localStorage.setItem("transactions", JSON.stringify(transactions));
+    localStorage.setItem("soldeHistory", JSON.stringify(soldeHistory));
+    localStorage.setItem("labelsSolde", JSON.stringify(labelsSolde));
+}
+
+// On ajoute l’appel dans recalculerTotaux SANS modifier la fonction
+var _oldRecalculerTotaux = recalculerTotaux;
+recalculerTotaux = function () {
+    _oldRecalculerTotaux();
+    sauvegarderDonnees();
+};
