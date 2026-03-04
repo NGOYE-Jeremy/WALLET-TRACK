@@ -30,7 +30,7 @@
 
 .partie-gauche .logo-r{
     font-weight: bold;
-    color: rgb(165, 0, 0);
+    color: #0500ff;
 }
 
 .partie-gauche .btn{
@@ -105,10 +105,13 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: 0.5s;
 }
-
+.grid .item:hover{
+    transform: translateY(-3px);
+}
 .grid .revenue{
-    background-color: #bcb914;
+    background-color: #00930a;
 }
 
 .grid .depense{
@@ -198,19 +201,21 @@
 .enregistrement{
     display: flex;
     justify-content: center;
-    color: #000;
-    border: 2px solid black;
-    transition: 0.7s;
+    color: #ffffff;
+    border: 2px solid #0500ff;
+    font-weight: bold;
+    transition: 0.5s;
     padding: 10px 20px;
     border-radius: 20px;
     align-items: center;
     cursor: pointer;
     gap: 10px;
+    background-color: #0500ff;
 }
 
 .enregistrement:hover{
-    background-color: #000;
-    color: #fff;
+    background-color: #fffefe;
+    color: #000000;
 }
 
 .formulaire{
@@ -229,7 +234,7 @@
     display: none;
     border: 1px solid black;
     backdrop-filter: blur(19px);
-    background-color: rgba(255,255,255,0.4);
+    background-color: rgba(255, 255, 255, 0.687);
 }
 
 .formulaire input{
