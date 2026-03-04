@@ -1,39 +1,49 @@
 var formulaire = document.getElementById("formulaire");
 var formulaire_contact = document.getElementById("formulaire_contact");
+
 var transactions = [];
 var soldeHistory = [];
 var labelsSolde = [];
-var currentCurrency = "XAF";
 
+var currentCurrency = "XAF";
+// Toutes les valeurs internes sont en XAF
 var rates = { XAF: 1, USD: 600, EUR: 650 };
 var symbols = { XAF: "XAF", USD: "$", EUR: "€" };
 
-// convertion de la monaie
-function convert(amount) {
-    return amount / rates[currentCurrency];
+// Convertit un montant XAF en monnaie affichée
+function convert(amountXAF) {
+    return amountXAF / rates[currentCurrency];
 }
 
-function format(amount) {
-    return convert(amount).toFixed(2) + " " + symbols[currentCurrency];
+function format(amountXAF) {
+    return convert(amountXAF).toFixed(2) + " " + symbols[currentCurrency];
 }
 
-// ouvrerture et fermeture du formulaire
-function ouvrir_formulaire() {
-    formulaire.style.display = "flex";
+// Ouvrir ou fermer les formulaires
+function ouvrir_formulaire() { 
+    formulaire.style.display = "flex"; 
 }
-
-function fermer_formulaire() {
-    formulaire.style.display = "none";
+function fermer_formulaire() { 
+    formulaire.style.display = "none"; 
 }
-
 function ouverture_formulaire_contacte() {
-    formulaire_contact.style.display = "block";
+     formulaire_contact.style.display = "block"; 
+    }
+function fermer_formulaire_contact() { 
+    formulaire_contact.style.display = "none"; 
 }
-
-function fermer_formulaire_contact() {
-    formulaire_contact.style.display = "none";
+// ********************************fonction de calcule avec reduce()***************************
+function calculerTotaux() {
+    return transactions.reduce(
+        (acc, t) => {
+            if (t.type === "Revenue") acc.totalRevenu += t.montantXAF;
+            if (t.type === "Dépense") acc.totalDepense += t.montantXAF;
+            return acc;
+        },
+        { totalRevenu: 0, totalDepense: 0 }
+    );
 }
-// *****************rendre le formulaire fonctionnel*****************************
+// *************************ajouter une transaction dans le formulaire*****************************
 formulaire.addEventListener("submit", function (e) {
     e.preventDefault();
 
@@ -43,33 +53,38 @@ formulaire.addEventListener("submit", function (e) {
     var type = document.getElementById("type").value;
 
     if (type === "type") return alert("Choisir le type");
+    if (montant <= 0) return alert("Montant invalide");
 
-    transactions.push({ date, categorie, montant, type });
+    // On convertit TOUT en XAF dès l’enregistrement
+    var montantXAF = montant * rates[currentCurrency];
 
-    afficherTransaction(date, categorie, montant, type);
+    transactions.push({ date, categorie, montantXAF, type });
+
+    afficherTransaction(date, categorie, montantXAF, type);
     recalculerTotaux();
 
     formulaire.reset();
     fermer_formulaire();
 });
 
-function afficherTransaction(date, categorie, montant, type) {
+// ********************affichage d'une transaction dans le tableau********************
+function afficherTransaction(date, categorie, montantXAF, type) {
     var tbody = document.querySelector("tbody");
     var tr = document.createElement("tr");
 
     tr.innerHTML = `
         <td>${date}</td>
         <td>${categorie}</td>
-        <td>${format(montant)}</td>
+        <td>${format(montantXAF)}</td>
         <td>${type}</td>
     `;
 
     tbody.appendChild(tr);
 }
 
+// ************************recalculer et afficher les nouveaux montants*********************
 function recalculerTotaux() {
-    var totalRevenu = transactions.filter(t => t.type === "Revenue").reduce((a, t) => a + t.montant, 0);
-    var totalDepense = transactions.filter(t => t.type === "Dépense").reduce((a, t) => a + t.montant, 0);
+    var { totalRevenu, totalDepense } = calculerTotaux();
     var solde = totalRevenu - totalDepense;
 
     document.querySelector(".revenue .montant p").innerText = format(totalRevenu);
@@ -82,80 +97,47 @@ function recalculerTotaux() {
     updateCharts();
 }
 
-// ***********************conversion de la monaie (FCFA/USD/EURO)***************************
+//**************************** */ changement de la monaie*****************************
 document.getElementById("monnaie").addEventListener("change", function () {
     currentCurrency = this.value;
 
     document.querySelector("tbody").innerHTML = "";
-    transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montant, t.type));
+    transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montantXAF, t.type));
 
     recalculerTotaux();
 });
 
-// **************************gestion des graphiques ********************************
+// *****************************gestion des graphiques avec Chart.js*************************
 var ctx1 = document.getElementById("chartDepense").getContext("2d");
 var ctx2 = document.getElementById("chartFlux").getContext("2d");
 var ctx3 = document.getElementById("chartSolde").getContext("2d");
 
-var chartDepense = new Chart(ctx1, { // graphique pour les dépenses
+var chartDepense = new Chart(ctx1, {
     type: "doughnut",
-    data: {
-        labels: [],
-        datasets: [{
-            data: [],
-            backgroundColor: ["#ff0000", "#ff8000", 
-                                "#51ff00", "#ff00d0", "#00ffd5", 
-                                "#5500ff"]
-        }]
-    },
-    options: {
-        cutout: "70%",
-        plugins: { legend: { position: "bottom" } }
-    }
+    data: { labels: [], datasets: [{ data: [], backgroundColor: ["#ff0000", "#ff8000", "#51ff00", "#ff00d0", "#00ffd5", "#5500ff"] }] },
+    options: { cutout: "70%", plugins: { legend: { position: "bottom" } } }
 });
 
-var chartFlux = new Chart(ctx2, { // graphique pour le flux de trésorerie (le cache flow)
+var chartFlux = new Chart(ctx2, {
     type: "bar",
-    data: {
-        labels: ["Revenus", "Dépenses"],
-        datasets: [{
-            data: [0, 0],
-            backgroundColor: ["#36a2eb", "#ff6384"]
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-    }
+    data: { labels: ["Revenus", "Dépenses"], datasets: [{ data: [0, 0], backgroundColor: ["#36a2eb", "#ff6384"] }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
 });
 
-var chartSolde = new Chart(ctx3, { //graphique pour le solde
+var chartSolde = new Chart(ctx3, {
     type: "line",
-    data: {
-        labels: labelsSolde,
-        datasets: [{
-            data: soldeHistory,
-            borderColor: "#4bc0c0",
-            fill: false,
-            tension: 0.3
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: { y: { beginAtZero: true } }
-    }
+    data: { labels: labelsSolde, datasets: [{ data: soldeHistory, borderColor: "#4bc0c0", fill: false, tension: 0.3 }] },
+    options: { responsive: true, scales: { y: { beginAtZero: true } } }
 });
 
-function updateCharts() { //mise à jour des graphiques
+function updateCharts() {
     var depenses = transactions.filter(t => t.type === "Dépense");
 
     chartDepense.data.labels = depenses.map(t => t.categorie);
-    chartDepense.data.datasets[0].data = depenses.map(t => convert(t.montant));
+    chartDepense.data.datasets[0].data = depenses.map(t => convert(t.montantXAF));
     chartDepense.update();
 
-    var totalRevenu = transactions.filter(t => t.type === "Revenue").reduce((a, t) => a + t.montant, 0);
-    var totalDepense = transactions.filter(t => t.type === "Dépense").reduce((a, t) => a + t.montant, 0);
-
+    var { totalRevenu, totalDepense } = calculerTotaux();
     chartFlux.data.datasets[0].data = [convert(totalRevenu), convert(totalDepense)];
     chartFlux.update();
 
@@ -164,22 +146,17 @@ function updateCharts() { //mise à jour des graphiques
     chartSolde.update();
 }
 
-// *************************exporter un fichier en csv*************************
+// ***************************exporter les données en fichier csv***********************
 function exporterCSV() {
-    if (transactions.length === 0) {
-        alert("Aucune transaction à exporter.");
-        return;
-    }
+    if (transactions.length === 0) return alert("Aucune transaction à exporter.");
 
-    var csv = [];
-    csv.push("Date,Catégorie,Montant,Type");
+    var csv = ["Date;Catégorie;Montant;Type"];
 
     transactions.forEach(t => {
-        var montantConverti = convert(t.montant).toFixed(2) + " " + symbols[currentCurrency];
-        csv.push(`${t.date},${t.categorie},${montantConverti},${t.type}`);
+        csv.push(`${t.date};${t.categorie};${format(t.montantXAF)};${t.type}`);
     });
 
-    var blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+    var blob = new Blob(["\ufeff" + csv.join("\n")], { type: "text/csv;charset=utf-8;" });
     var lien = document.createElement("a");
     lien.href = URL.createObjectURL(blob);
     lien.download = "wallet-track.csv";
@@ -188,29 +165,28 @@ function exporterCSV() {
 
 document.querySelector(".btn-export").addEventListener("click", exporterCSV);
 
-// ************************calcule des dépenses et des revenues avec reduce()*********************
-function calculerAvecReduce() {
-    return transactions.reduce(
-        (acc, t) => {
-            if (t.type === "Revenue") acc.totalRevenu += t.montant;
-            if (t.type === "Dépense") acc.totalDepense += t.montant;
-            return acc;
-        },
-        { totalRevenu: 0, totalDepense: 0 }
-    );
-}
-
-// **************************** SAUVEGARDE AUTOMATIQUE AVEC localStorage ******************************
-
-// Charger les données sauvegardées au démarrage
+// **********************sauvegarder les données**********************
 window.addEventListener("load", function () {
+    var savedUser = localStorage.getItem("user");
+    if (!savedUser) {
+        document.getElementById("authContainer").style.display = "flex";
+        document.getElementById("app").style.display = "none";
+        return;
+    }
+
+    savedUser = JSON.parse(savedUser);
+    document.getElementById("usernameDisplay").innerText = savedUser.name;
+
+    document.getElementById("authContainer").style.display = "none";
+    document.getElementById("app").style.display = "flex";
+
     var savedTransactions = localStorage.getItem("transactions");
     var savedSoldeHistory = localStorage.getItem("soldeHistory");
     var savedLabelsSolde = localStorage.getItem("labelsSolde");
 
     if (savedTransactions) {
         transactions = JSON.parse(savedTransactions);
-        transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montant, t.type));
+        transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montantXAF, t.type));
     }
 
     if (savedSoldeHistory) soldeHistory = JSON.parse(savedSoldeHistory);
@@ -219,50 +195,90 @@ window.addEventListener("load", function () {
     recalculerTotaux();
 });
 
-// Sauvegarder automatiquement après chaque ajout
 function sauvegarderDonnees() {
     localStorage.setItem("transactions", JSON.stringify(transactions));
     localStorage.setItem("soldeHistory", JSON.stringify(soldeHistory));
     localStorage.setItem("labelsSolde", JSON.stringify(labelsSolde));
 }
 
-// On ajoute l’appel dans recalculerTotaux SANS modifier la fonction
 var _oldRecalculerTotaux = recalculerTotaux;
 recalculerTotaux = function () {
     _oldRecalculerTotaux();
     sauvegarderDonnees();
 };
 
-// **************************** SUPPRIMER LES DONNÉES SAUVEGARDÉES ******************************
+// **********************supprimer toutes les données***********************
 function resetDonnees() {
+    if (!confirm("Voulez-vous vraiment supprimer toutes vos données ?")) return;
 
-    // Demande de confirmation
-    var confirmation = confirm("Voulez-vous vraiment supprimer toutes vos données ? Cette action est irréversible.");
+    localStorage.clear();
 
-    if (!confirmation) {
-        alert("Suppression annulée.");
-        return;
-    }
-
-    // Suppression des données
-    localStorage.removeItem("transactions");
-    localStorage.removeItem("soldeHistory");
-    localStorage.removeItem("labelsSolde");
-
-    // Réinitialiser les variables en mémoire
     transactions = [];
     soldeHistory = [];
     labelsSolde = [];
 
-    // Vider l'affichage
     document.querySelector("tbody").innerHTML = "";
     document.querySelector(".revenue .montant p").innerText = format(0);
     document.querySelector(".depense .montant p").innerText = format(0);
     document.querySelector(".solde .montant p").innerText = format(0);
 
-    // Mettre à jour les graphiques
     updateCharts();
 
     alert("Toutes les données ont été supprimées !");
 }
 
+function signupUser() {
+    var name = document.getElementById("signupName").value;
+    var pass = document.getElementById("signupPassword").value;
+
+    if (!name || !pass) return alert("Champs requis");
+
+    localStorage.setItem("user", JSON.stringify({ name, pass }));
+
+    alert("Compte créé");
+    showLogin();
+}
+
+
+function loginUser() {
+    var name = document.getElementById("loginName").value;
+    var pass = document.getElementById("loginPassword").value;
+
+    var saved = localStorage.getItem("user");
+    if (!saved) return alert("Aucun compte trouvé");
+
+    saved = JSON.parse(saved);
+
+    if (saved.name !== name || saved.pass !== pass) return alert("Identifiants incorrects");
+
+    document.getElementById("usernameDisplay").innerText = saved.name;
+
+    document.getElementById("authContainer").style.display = "none";
+    document.getElementById("app").style.display = "flex";
+}
+
+function showSignup() {
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("signupBox").style.display = "flex";
+}
+
+function showLogin() {
+    document.getElementById("signupBox").style.display = "none";
+    document.getElementById("loginBox").style.display = "flex";
+    }
+
+
+    function logoutUser() {
+    // supprimer uniquement l'utilisateur, pas les transactions
+    localStorage.removeItem("user");
+
+    // masquer l'application
+    document.getElementById("app").style.display = "none";
+
+    // afficher l'écran de connexion
+    document.getElementById("authContainer").style.display = "flex";
+
+    // réinitialiser les champs de connexion
+    document.getElementById("loginName").value = "";
+    document.getElementById("loginPassword").value = "";
+}

@@ -8,7 +8,25 @@
     <title>Wallet-Track</title>
 </head>
 <body>
-    <div class="container">
+    <div class="auth-container" id="authContainer">
+        <div class="auth-box" id="loginBox">
+            <h2>Connexion</h2>
+            <input type="text" id="loginName" placeholder="Nom">
+            <input type="password" id="loginPassword" placeholder="Mot de passe">
+            <button onclick="loginUser()">Se connecter</button>
+            <p onclick="showSignup()">Créer un compte</p>
+        </div>
+
+        <div class="auth-box" id="signupBox" style="display:none;">
+            <h2>Inscription</h2>
+            <input type="text" id="signupName" placeholder="Nom">
+            <input type="password" id="signupPassword" placeholder="Mot de passe">
+            <button onclick="signupUser()">S'inscrire</button>
+            <p onclick="showLogin()">Déjà un compte ? Connexion</p>
+        </div>
+    </div>
+
+    <div class="container" id="app" > <!--style="display:none;"-->
         <section class="partie-gauche">
             <div class="logo">
                 <p><span class="logo-l">WALLET</span>-<span class="logo-r">TRACK</span></p>
@@ -28,11 +46,14 @@
 
                 <form id="formulaire_contact" action="https://formspree.io/f/xjgenwpj" method="POST">
                     <label for="name">nom</label>
-                    <input type="text" id="name"> <br>
+                    <input type="text" name="name" id="name"> <br>
+
                     <label for="email">email</label>
-                    <input type="email" id="email"> <br>
+                    <input type="email" name="email" id="email"> <br>
+
                     <label for="message">message</label>
                     <textarea name="message" id="message" placeholder="message"></textarea> <br>
+
                     <div class="bouton-contact">
                         <button type="submit" class="submit">Envoyer</button>
                         <div class="submit" onclick="fermer_formulaire_contact()">
@@ -40,17 +61,21 @@
                         </div>
                     </div>
                 </form>
+                <button class="btn" onclick="logoutUser()">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Déconnexion
+                </button>
+
             </div>
         </section>
 
         <section class="partie-droite">
             <div class="top">
                 <div class="message">
-                    <p><span class="text-gros">Bonjour</span> <br> 
+                    <p><span class="text-gros">Bonjour </span><span id="usernameDisplay"></span> <br> 
                     <span class="text-flou">Bienvenue sur</span> 
                     <span class="text-gras">Wallet-track</span></p>
                 </div>
-
                 <select id="monnaie" class="monnaie">
                     <option value="XAF">XAF</option>
                     <option value="USD">USD</option>

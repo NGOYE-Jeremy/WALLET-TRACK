@@ -21,7 +21,11 @@
     width: 20%;
     min-width: 180px;
 }
-
+#usernameDisplay{
+    font-size: 30px;
+    color: #d8d8d8;
+    font-weight: bold;
+}
 .partie-gauche .logo-l{
     font-weight: bold;
     color: #000;
@@ -59,6 +63,7 @@
     width: 80%;
     flex-direction: column;
     gap: 30px;
+    height: auto;
 }
 
 .text-gros{
@@ -335,20 +340,20 @@
     flex-wrap: wrap;
 }
 
-.chart-block{
+.chart-box{
     flex: 1 1 300px;
     max-width: 33.33%;
     min-width: 260px;
 }
 
-.chart-block h3{
+.chart-box h3{
     text-align: center;
     margin-bottom: 10px;
 }
 
 .graphique{
-    width: 100% !important;
-    height: 260px !important;
+    width: 100%;
+    height: 260px;
 }
 .btn-reset{
     padding: 10px 20px;
@@ -417,4 +422,73 @@
     .grid .item .montant{
         font-size: 20px;
     }
+}
+
+
+/* Auth */
+.auth-container{
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#e6e6e6;
+    z-index: 9999;
+}
+
+.auth-box{
+    background:#fff;
+    padding:30px;
+    border-radius:10px;
+    width:300px;
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    text-align:center;
+    border:1px solid #ccc;
+}
+
+.auth-box input{
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:5px;
+}
+
+.auth-box button{
+    padding:10px;
+    background:#0500ff;
+    color:#fff;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.auth-box p{
+    cursor:pointer;
+    color:#0500ff;
+}
+
+/* Bouton déconnexion */
+.btn-auth{
+    padding:8px 15px;
+    background:#000;
+    color:#fff;
+    border-radius:8px;
+    cursor:pointer;
+    border:none;
+    margin-left:10px;
+}
+
+.deconnexion-monaie{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.usernameDisplay{
+    font-size: 19px;
 }
