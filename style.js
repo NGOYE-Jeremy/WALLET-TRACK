@@ -1,26 +1,35 @@
-var formulaire = document.getElementById("formulaire");
+/* -------------------------
+   VARIABLES GLOBALES
+-------------------------- */
 
-function ouvrir_formulaire(){
+var formulaire = document.getElementById("formulaire");
+var transactions = []; // Toutes les transactions stockées ici
+
+var categoriesDepense = [];
+var montantsDepense = [];
+
+/* -------------------------
+   OUVERTURE / FERMETURE FORM
+-------------------------- */
+
+function ouvrir_formulaire() {
     formulaire.style.display = "flex";
 }
-function fermer_formulaire(){
+
+function fermer_formulaire() {
     formulaire.style.display = "none";
 }
 
 /* -------------------------
-   AJOUT DES TRANSACTIONS
+   AJOUT D’UNE TRANSACTION
 -------------------------- */
 
-var totalRevenu = 0;
-var totalDepense = 0;
-
-formulaire.addEventListener("submit", function(e) {
+formulaire.addEventListener("submit", function (e) {
     e.preventDefault();
 
     var montant = Number(document.getElementById("montant").value);
     var categorie = document.getElementById("categorie").value;
     var date = document.querySelector("input[name='date']").value;
-
     var typeSelectionne = document.getElementById("type").value;
 
     if (typeSelectionne === "type") {
@@ -28,12 +37,26 @@ formulaire.addEventListener("submit", function(e) {
         return;
     }
 
-    // ✅ CONDITION : montant doit être positif
-    if (montant <= 0) {
-        alert("Le montant doit obligatoirement être positif !");
-        return;
-    }
+    // Ajout dans le tableau
+    transactions.push({
+        date: date,
+        categorie: categorie,
+        montant: montant,
+        type: typeSelectionne
+    });
 
+    afficherTransaction(date, categorie, montant, typeSelectionne);
+    recalculerTotaux();
+
+    formulaire.reset();
+    fermer_formulaire();
+});
+
+/* -------------------------
+   AFFICHAGE DANS LE TABLEAU
+-------------------------- */
+
+function afficherTransaction(date, categorie, montant, type) {
     var tbody = document.querySelector("tbody");
 
     var tr = document.createElement("tr");
@@ -41,27 +64,25 @@ formulaire.addEventListener("submit", function(e) {
         <td>${date}</td>
         <td>${categorie}</td>
         <td>${montant}</td>
-        <td>${typeSelectionne}</td>
+        <td>${type}</td>
     `;
 
     tbody.appendChild(tr);
-
-    mettreAJourTotaux(montant, typeSelectionne, categorie);
-
-    formulaire.reset();
-    fermer_formulaire();
-});
+}
 
 /* -------------------------
-   MISE À JOUR DES TOTAUX
+   CALCUL DES TOTAUX AVEC REDUCE
 -------------------------- */
 
-function mettreAJourTotaux(montant, type, categorie) {
-    if (type === "Revenue") {
-        totalRevenu += montant;
-    } else {
-        totalDepense += montant;
-    }
+function recalculerTotaux() {
+
+    var totalRevenu = transactions
+        .filter(t => t.type === "Revenue")
+        .reduce((acc, t) => acc + t.montant, 0);
+
+    var totalDepense = transactions
+        .filter(t => t.type === "Dépense")
+        .reduce((acc, t) => acc + t.montant, 0);
 
     var solde = totalRevenu - totalDepense;
 
@@ -69,11 +90,25 @@ function mettreAJourTotaux(montant, type, categorie) {
     document.querySelector(".depense .montant p").innerText = totalDepense + " FCFA";
     document.querySelector(".solde .montant p").innerText = solde + " FCFA";
 
-    if (type === "Dépense") {
-        categoriesDepense.push(categorie);
-        montantsDepense.push(montant);
-        chartDepense.update();
-    }
+    mettreAJourGraphique();
+}
+
+/* -------------------------
+   MISE À JOUR DU GRAPHIQUE
+-------------------------- */
+
+function mettreAJourGraphique() {
+    categoriesDepense.length = 0;
+    montantsDepense.length = 0;
+
+    transactions
+        .filter(t => t.type === "Dépense")
+        .forEach(t => {
+            categoriesDepense.push(t.categorie);
+            montantsDepense.push(t.montant);
+        });
+
+    chartDepense.update();
 }
 
 /* -------------------------
@@ -112,13 +147,10 @@ function exporterCSV() {
 document.querySelector(".btn-export").addEventListener("click", exporterCSV);
 
 /* -------------------------
-   GRAPHIQUE DES DÉPENSES
+   GRAPHIQUE DOUGHNUT
 -------------------------- */
 
 var ctx = document.getElementById("chartDepense").getContext("2d");
-
-var categoriesDepense = [];
-var montantsDepense = [];
 
 var chartDepense = new Chart(ctx, {
     type: "doughnut",
@@ -127,8 +159,8 @@ var chartDepense = new Chart(ctx, {
         datasets: [{
             data: montantsDepense,
             backgroundColor: [
-                "#ff6384", "#ff9f40", "#ffcd56",
-                "#4bc0c0", "#36a2eb", "#9966ff"
+                "#ff0000", "#ff8000", "#51ff00",
+                "#ff00d0", "#00ffd5", "#5500ff"
             ],
             borderWidth: 1
         }]
@@ -145,6 +177,11 @@ var chartDepense = new Chart(ctx, {
                 ctx.fillStyle = "#333";
                 ctx.textAlign = "center";
                 ctx.textBaseline = "middle";
+
+                var totalDepense = transactions
+                    .filter(t => t.type === "Dépense")
+                    .reduce((acc, t) => acc + t.montant, 0);
+
                 ctx.fillText(totalDepense + " FCFA", width / 2, height / 2);
             }
         }
