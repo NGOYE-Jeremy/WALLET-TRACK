@@ -34,7 +34,7 @@ formulaire.addEventListener("submit", function (e) {
     var date = document.querySelector("input[name='date']").value;
     var type = document.getElementById("type").value;
 
-    if (type === "type") return alert("Choisir Revenue ou Dépense");
+    if (type === "type") return alert("Choisir le type");
 
     transactions.push({ date, categorie, montant, type });
 
