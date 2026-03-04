@@ -21,61 +21,48 @@
                         Tableau de bord
                     </div>
                 </a>
-                <a href="statistique.html">
-                    <div class="btn">
-                        <i class="fa fa-line-chart"></i>
-                        Statistique
-                    </div>
-                </a>
             </div>
         </section>
 
         <section class="partie-droite">
             <div class="top">
                 <div class="message">
-                    <p><span class="text-gros">Bonjour</span> <br> <span class="text-flou">Bienvenue sur</span> <span class="text-gras">Wallet-track</span></p>
+                    <p><span class="text-gros">Bonjour</span> <br> 
+                    <span class="text-flou">Bienvenue sur</span> 
+                    <span class="text-gras">Wallet-track</span></p>
                 </div>
+
                 <select id="monnaie" class="monnaie">
-                        <option value="XAF">XAF</option>
-                        <option value="USD">USD</option>
-                        <option value="Euro">Euro</option>
+                    <option value="XAF">XAF</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
                 </select>
             </div>
+
             <div class="grid">
                 <div class="item solde">
-                    <div class="titre">
-                        <p>Solde</p>
-                    </div>
+                    <div class="titre"><p>Solde</p></div>
                     <div class="depot" onclick="ouvrir_formulaire()">
-                        <i class="fa-solid fa-plus"></i>
-                        ajouter
+                        <i class="fa-solid fa-plus"></i> ajouter
                     </div>
-                    <div class="montant">
-                        <p>0 FCFA</p>
-                    </div>
+                    <div class="montant"><p>0 XAF</p></div>
                 </div>
+
                 <div class="item revenue">
-                    <div class="titre">
-                        <p>Revenue</p>
-                    </div>
-                    <div class="montant">
-                        <p>0 FCFA</p>
-                    </div>
+                    <div class="titre"><p>Revenue</p></div>
+                    <div class="montant"><p>0 XAF</p></div>
                 </div>
+
                 <div class="item depense">
-                    <div class="titre">
-                        <p>Dépense</p>
-                    </div>
-                    <div class="montant">
-                        <p>0 FCFA</p>
-                    </div>
+                    <div class="titre"><p>Dépense</p></div>
+                    <div class="montant"><p>0 XAF</p></div>
                 </div>
             </div>
 
-             <button class="btn-export">
-                <i class="fa-solid fa-file-export"></i>
-                Exporter en CSV
+            <button class="btn-export">
+                <i class="fa-solid fa-file-export"></i> Exporter en CSV
             </button>
+
             <div class="line"></div>
 
             <div class="transaction">
@@ -93,21 +80,12 @@
                             <th>Type</th>
                         </tr>
                     </thead>
-
-                    <tbody>
-                        <tr>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                            <td>-</td>
-                        </tr>
-                    </tbody>
+                    <tbody></tbody>
                 </table>
             </div>
 
             <div class="enregistrement" onclick="ouvrir_formulaire()">
-                <i class="fa-solid fa-plus"></i>
-                Enregistrement
+                <i class="fa-solid fa-plus"></i> Enregistrement
             </div>
 
             <form id="formulaire" class="formulaire">
@@ -121,9 +99,11 @@
 
                 <div class="inp">
                     <label for="montant">montant</label>
-                    <input type="number" name="montant"id="montant" required>
+                    <input type="number" name="montant" id="montant" required>
+
                     <label for="categorie">Catégorie</label>
                     <input type="text" name="categorie" id="categorie" required>
+
                     <label for="date">Date</label>
                     <input type="datetime-local" name="date" required>
                 </div>
@@ -136,15 +116,26 @@
 
             <div class="line"></div>
 
-            <div class="graphique-depense">
-                <h3>Graphique des dépenses</h3>
-                <canvas id="chartDepense" class="graphique"></canvas>
+            <div class="charts-container">
+                <div class="chart-box">
+                    <h3>Dépenses</h3>
+                    <canvas id="chartDepense"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Flux de trésorerie</h3>
+                    <canvas id="chartFlux"></canvas>
+                </div>
+
+                <div class="chart-box">
+                    <h3>Solde</h3>
+                    <canvas id="chartSolde"></canvas>
+                </div>
             </div>
         </section>
     </div>
 
-
-    <script src="style.js">
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="style.js"></script>
 </body>
 </html>
