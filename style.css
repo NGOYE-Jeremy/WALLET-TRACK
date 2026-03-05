@@ -369,7 +369,7 @@
     background-color: #fff;
     color: black;
 }
-/* Responsive */
+/* Responsive design*/
 
 @media (max-width: 1024px){
     #formulaire_contact{
@@ -425,7 +425,7 @@
 }
 
 
-/* Auth */
+/* Authentification */
 .auth-container{
     position: fixed;
     top:0;

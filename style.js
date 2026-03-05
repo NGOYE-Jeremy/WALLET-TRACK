@@ -28,10 +28,11 @@ function fermer_formulaire() {
 }
 function ouverture_formulaire_contacte() {
      formulaire_contact.style.display = "block"; 
-    }
+}
 function fermer_formulaire_contact() { 
     formulaire_contact.style.display = "none"; 
 }
+
 // ********************************fonction de calcule avec reduce()***************************
 function calculerTotaux() {
     return transactions.reduce(
@@ -43,6 +44,7 @@ function calculerTotaux() {
         { totalRevenu: 0, totalDepense: 0 }
     );
 }
+
 // *************************ajouter une transaction dans le formulaire*****************************
 formulaire.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -96,6 +98,13 @@ function recalculerTotaux() {
 
     updateCharts();
 }
+
+// Override pour sauvegarder automatiquement
+var _oldRecalculerTotaux = recalculerTotaux;
+recalculerTotaux = function () {
+    _oldRecalculerTotaux();
+    sauvegarderDonneesUtilisateur();
+};
 
 //**************************** */ changement de la monaie*****************************
 document.getElementById("monnaie").addEventListener("change", function () {
@@ -165,53 +174,16 @@ function exporterCSV() {
 
 document.querySelector(".btn-export").addEventListener("click", exporterCSV);
 
-// **********************sauvegarder les données**********************
-window.addEventListener("load", function () {
-    var savedUser = localStorage.getItem("user");
-    if (!savedUser) {
-        document.getElementById("authContainer").style.display = "flex";
-        document.getElementById("app").style.display = "none";
-        return;
-    }
-
-    savedUser = JSON.parse(savedUser);
-    document.getElementById("usernameDisplay").innerText = savedUser.name;
-
-    document.getElementById("authContainer").style.display = "none";
-    document.getElementById("app").style.display = "flex";
-
-    var savedTransactions = localStorage.getItem("transactions");
-    var savedSoldeHistory = localStorage.getItem("soldeHistory");
-    var savedLabelsSolde = localStorage.getItem("labelsSolde");
-
-    if (savedTransactions) {
-        transactions = JSON.parse(savedTransactions);
-        transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montantXAF, t.type));
-    }
-
-    if (savedSoldeHistory) soldeHistory = JSON.parse(savedSoldeHistory);
-    if (savedLabelsSolde) labelsSolde = JSON.parse(savedLabelsSolde);
-
-    recalculerTotaux();
-});
-
-function sauvegarderDonnees() {
-    localStorage.setItem("transactions", JSON.stringify(transactions));
-    localStorage.setItem("soldeHistory", JSON.stringify(soldeHistory));
-    localStorage.setItem("labelsSolde", JSON.stringify(labelsSolde));
-}
-
-var _oldRecalculerTotaux = recalculerTotaux;
-recalculerTotaux = function () {
-    _oldRecalculerTotaux();
-    sauvegarderDonnees();
-};
-
 // **********************supprimer toutes les données***********************
 function resetDonnees() {
     if (!confirm("Voulez-vous vraiment supprimer toutes vos données ?")) return;
 
-    localStorage.clear();
+    if (currentUser && users[currentUser]) {
+        users[currentUser].transactions = [];
+        users[currentUser].soldeHistory = [];
+        users[currentUser].labelsSolde = [];
+        saveUsers();
+    }
 
     transactions = [];
     soldeHistory = [];
@@ -227,34 +199,76 @@ function resetDonnees() {
     alert("Toutes les données ont été supprimées !");
 }
 
+// ===================== GESTION MULTI-UTILISATEURS =====================
+var users = JSON.parse(localStorage.getItem("users")) || {};
+var currentUser = null;
+
+function saveUsers() {
+    localStorage.setItem("users", JSON.stringify(users));
+}
+
+function chargerDonneesUtilisateur(name) {
+    currentUser = name;
+
+    if (!users[name]) return;
+
+    transactions = users[name].transactions || [];
+    soldeHistory = users[name].soldeHistory || [];
+    labelsSolde = users[name].labelsSolde || [];
+
+    document.querySelector("tbody").innerHTML = "";
+    transactions.forEach(t => afficherTransaction(t.date, t.categorie, t.montantXAF, t.type));
+
+    recalculerTotaux();
+}
+
+function sauvegarderDonneesUtilisateur() {
+    if (!currentUser) return;
+
+    users[currentUser] = {
+        pass: users[currentUser].pass,
+        transactions: transactions,
+        soldeHistory: soldeHistory,
+        labelsSolde: labelsSolde
+    };
+
+    saveUsers();
+}
+// ===================== AUTHENTIFICATION =====================
 function signupUser() {
     var name = document.getElementById("signupName").value;
     var pass = document.getElementById("signupPassword").value;
 
     if (!name || !pass) return alert("Champs requis");
 
-    localStorage.setItem("user", JSON.stringify({ name, pass }));
+    if (users[name]) return alert("Ce nom existe déjà");
 
-    alert("Compte créé");
+    users[name] = {
+        pass: pass,
+        transactions: [],
+        soldeHistory: [],
+        labelsSolde: []
+    };
+
+    saveUsers();
+
+    alert("Compte créé !");
     showLogin();
 }
-
 
 function loginUser() {
     var name = document.getElementById("loginName").value;
     var pass = document.getElementById("loginPassword").value;
 
-    var saved = localStorage.getItem("user");
-    if (!saved) return alert("Aucun compte trouvé");
+    if (!users[name]) return alert("Aucun compte trouvé");
+    if (users[name].pass !== pass) return alert("Mot de passe incorrect");
 
-    saved = JSON.parse(saved);
-
-    if (saved.name !== name || saved.pass !== pass) return alert("Identifiants incorrects");
-
-    document.getElementById("usernameDisplay").innerText = saved.name;
+    document.getElementById("usernameDisplay").innerText = name;
 
     document.getElementById("authContainer").style.display = "none";
     document.getElementById("app").style.display = "flex";
+
+    chargerDonneesUtilisateur(name);
 }
 
 function showSignup() {
@@ -265,20 +279,20 @@ function showSignup() {
 function showLogin() {
     document.getElementById("signupBox").style.display = "none";
     document.getElementById("loginBox").style.display = "flex";
-    }
+}
 
+function logoutUser() {
+    currentUser = null;
 
-    function logoutUser() {
-    // supprimer uniquement l'utilisateur, pas les transactions
-    localStorage.removeItem("user");
-
-    // masquer l'application
     document.getElementById("app").style.display = "none";
-
-    // afficher l'écran de connexion
     document.getElementById("authContainer").style.display = "flex";
 
-    // réinitialiser les champs de connexion
     document.getElementById("loginName").value = "";
     document.getElementById("loginPassword").value = "";
 }
+
+// ===================== CHARGEMENT AU DEMARRAGE =====================
+window.addEventListener("load", function () {
+    document.getElementById("authContainer").style.display = "flex";
+    document.getElementById("app").style.display = "none";
+});
