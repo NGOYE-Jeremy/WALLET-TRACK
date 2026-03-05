@@ -492,3 +492,13 @@
 .usernameDisplay{
     font-size: 19px;
 }
+
+
+
+footer{
+    background-color: #eeeeee;
+    padding: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: #999;
+}
